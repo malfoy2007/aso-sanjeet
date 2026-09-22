@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Study Journal</title>
+  <title>Sanjeet's Private Study Diary</title>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -15,396 +16,437 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f6fb;
+      background: #f4f7fb;
       color: #172033;
     }
 
     .container {
+      width: 94%;
       max-width: 900px;
       margin: auto;
-      padding: 20px 15px;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 25px 0;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 7px 0 0;
+      opacity: 0.9;
     }
 
     .card {
       background: white;
+      border-radius: 16px;
       padding: 22px;
-      border-radius: 18px;
       margin-bottom: 20px;
-      box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
     }
 
-    h1 {
-      color: #1456c2;
+    h2 {
+      margin-top: 0;
+      color: #1d4ed8;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
     }
 
     input,
     textarea {
       width: 100%;
-      padding: 13px;
-      margin: 7px 0 14px;
-      border: 1px solid #d4dae5;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 12px;
+      border: 1px solid #ccd5e0;
+      border-radius: 9px;
+      font-size: 15px;
       font-family: inherit;
     }
 
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
     textarea {
-      min-height: 150px;
+      min-height: 130px;
       resize: vertical;
     }
 
-    button {
+    /* SAVE BUTTON */
+    .save-btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
       border: none;
       border-radius: 10px;
-      padding: 12px 17px;
-      margin: 4px;
-      font-size: 15px;
-    }
-
-    .primary {
-      background: #1456c2;
+      background: #2563eb;
       color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .danger {
-      background: #e53935;
+    .save-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .logout-btn {
+      background: #dc2626;
       color: white;
-    }
-
-    .secondary {
-      background: #e8edf5;
-      color: #172033;
-    }
-
-    .logout {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
       float: right;
-    }
-
-    #diarySection {
-      display: none;
-    }
-
-    .entry {
-      border-left: 5px solid #1456c2;
-      background: #f8faff;
-      padding: 17px;
-      border-radius: 10px;
-      margin: 18px 0;
-    }
-
-    .entry h3 {
-      margin-top: 0;
-    }
-
-    .date {
-      color: #667085;
-      font-size: 14px;
+      font-weight: bold;
     }
 
     .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
     .stat {
       background: white;
-      border: 1px solid #dce2eb;
-      padding: 8px 12px;
-      border-radius: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+
+    .entry {
+      border: 1px solid #e1e7ef;
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 15px;
+      background: #fff;
+    }
+
+    .entry h3 {
+      margin-top: 0;
+      color: #1d4ed8;
+    }
+
+    .entry p {
+      line-height: 1.6;
     }
 
     .study-image {
       width: 100%;
       max-height: 500px;
       object-fit: contain;
+      border-radius: 10px;
       margin-top: 15px;
-      border-radius: 12px;
-      background: #eee;
+      background: #f1f5f9;
     }
 
-    .status {
+    .action-btn {
+      border: none;
+      padding: 9px 14px;
+      border-radius: 7px;
+      margin-right: 7px;
+      margin-top: 12px;
+      cursor: pointer;
       font-weight: bold;
-      margin-top: 10px;
     }
 
-    .small {
-      color: #667085;
-      font-size: 13px;
+    .edit-btn {
+      background: #f59e0b;
+      color: white;
     }
 
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 8px;
+    .delete-btn {
+      background: #dc2626;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 8px;
+      background: #eef2ff;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+    }
+
+    @media (max-width: 600px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- =========================================
+     LOGIN PAGE
+========================================= -->
 
-  <!-- LOGIN -->
+<div id="loginPage">
 
-  <div class="card" id="loginSection">
+  <header>
+    <div class="container">
+      <h1>🔐 Sanjeet's Private Diary</h1>
+      <p>Private Study & Life Journal</p>
+    </div>
+  </header>
 
-    <h1>🔐 My Personal Space</h1>
-
-    <p>This is my private study journal.</p>
-
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-    >
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-    >
-
-    <button class="primary" onclick="login()">
-      Login
-    </button>
-
-    <p id="loginStatus" class="status"></p>
-
-  </div>
-
-
-  <!-- DIARY -->
-
-  <div id="diarySection">
+  <div class="container">
 
     <div class="card">
 
+      <h2>Login</h2>
+
+      <label>Email</label>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your email"
+      >
+
+      <label>Password</label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+      >
+
       <button
-        class="danger logout"
-        onclick="logout()">
+        class="save-btn"
+        onclick="login()"
+      >
+        🔐 Login
+      </button>
+
+      <div
+        id="loginMessage"
+        class="message hidden"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     DIARY PAGE
+========================================= -->
+
+<div id="diaryPage" class="hidden">
+
+  <header>
+
+    <div class="container">
+
+      <button
+        class="logout-btn"
+        onclick="logout()"
+      >
         Logout
       </button>
 
-      <h1>📚 My Study Journal</h1>
+      <h1>📚 My Study Diary</h1>
 
       <p>
-        My daily study, progress, memories and thoughts.
+        Track your daily study, progress and memories
       </p>
 
     </div>
 
-
-    <!-- NEW LOG -->
-
-    <div class="card">
-
-      <h2>📝 Daily Study Log</h2>
-
-      <label>Date</label>
-
-      <input
-        type="date"
-        id="studyDate"
-      >
+  </header>
 
 
-      <label>Total Study Hours</label>
-
-      <input
-        type="number"
-        id="studyHours"
-        placeholder="Example: 8.5"
-        min="0"
-        max="24"
-        step="0.01"
-      >
+  <div class="container">
 
 
-      <label>Subjects Studied</label>
+    <!-- =====================================
+         STATISTICS
+    ====================================== -->
 
-      <input
-        type="text"
-        id="subjects"
-        placeholder="Maths, English, GK..."
-      >
+    <div class="stats">
 
+      <div class="stat">
 
-      <label>Today's Progress / Thoughts</label>
+        <strong id="totalDays">
+          0
+        </strong>
 
-      <textarea
-        id="content"
-        placeholder="What did you study today?"
-      ></textarea>
+        Study Days
 
-
-      <label>📸 Study Log Image</label>
-
-      <input
-        type="file"
-        id="image"
-        accept="image/*"
-      >
-
-      <p class="      margin-top: 0;
-      color: #1456c2;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 13px;
-      margin: 8px 0 14px;
-      border: 1px solid #d5dbe5;
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 180px;
-      resize: vertical;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 15px;
-      cursor: pointer;
-      margin: 4px;
-    }
-
-    .primary {
-      background: #1456c2;
-      color: white;
-    }
-
-    .danger {
-      background: #e53935;
-      color: white;
-    }
-
-    .secondary {
-      background: #e9eef7;
-      color: #172033;
-    }
-
-    .message {
-      border-left: 4px solid #1456c2;
-      padding: 15px;
-      margin: 15px 0;
-      background: #f8faff;
-      border-radius: 8px;
-    }
-
-    .message h3 {
-      margin-top: 0;
-    }
-
-    .date {
-      color: #687386;
-      font-size: 13px;
-    }
-
-    #diarySection {
-      display: none;
-    }
-
-    #status {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    .logout {
-      float: right;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <!-- LOGIN -->
-  <div class="card" id="loginSection">
-    <h1>🔐 My Personal Space</h1>
-    <p>This area is private.</p>
-
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-      autocomplete="email"
-    >
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
-
-    <button class="primary" onclick="login()">
-      Login
-    </button>
-
-    <p id="loginStatus"></p>
-  </div>
+      </div>
 
 
-  <!-- DIARY -->
-  <div id="diarySection">
+      <div class="stat">
 
-    <div class="card">
-      <button class="danger logout" onclick="logout()">
-        Logout
-      </button>
+        <strong id="totalHours">
+          0
+        </strong>
 
-      <h1>📖 My Personal Diary</h1>
-      <p>Write your thoughts, memories and important moments.</p>
-    </div>
+        Total Hours
 
-
-    <!-- WRITE -->
-    <div class="card">
-
-      <h2>✍️ Write a New Memory</h2>
-
-      <input
-        type="text"
-        id="title"
-        placeholder="Title"
-      >
-
-      <textarea
-        id="content"
-        placeholder="Write your message or memory here..."
-      ></textarea>
-
-      <button class="primary" onclick="saveMessage()">
-        💾 Save Memory
-      </button>
-
-      <button
-        class="secondary"
-        onclick="clearForm()"
-      >
-        Clear
-      </button>
-
-      <p id="status"></p>
+      </div>
 
     </div>
 
 
-    <!-- MEMORIES -->
+    <!-- =====================================
+         STUDY LOG FORM
+    ====================================== -->
+
     <div class="card">
 
-      <h2>📚 My Memories</h2>
+      <h2 id="formTitle">
+        📝 Add Today's Study Log
+      </h2>
 
-      <div id="messages">
-        Loading...
+
+      <form id="entryForm">
+
+
+        <!-- DATE -->
+
+        <label>
+          Study Date
+        </label>
+
+        <input
+          type="date"
+          id="studyDate"
+          required
+        >
+
+
+        <!-- HOURS -->
+
+        <label>
+          Total Study Hours
+        </label>
+
+        <input
+          type="number"
+          id="studyHours"
+          min="0"
+          max="24"
+          step="0.25"
+          placeholder="Example: 8.5"
+          required
+        >
+
+
+        <!-- SUBJECTS -->
+
+        <label>
+          Subjects Studied
+        </label>
+
+        <input
+          type="text"
+          id="subjects"
+          placeholder="Example: Maths, English, Reasoning, GK"
+        >
+
+
+        <!-- THOUGHTS -->
+
+        <label>
+          Progress / Thoughts
+        </label>
+
+        <textarea
+          id="content"
+          placeholder="What did you study today? How was your day?"
+          required
+        ></textarea>
+
+
+        <!-- IMAGE -->
+
+        <label>
+          📷 Study Log Image
+        </label>
+
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+        >
+
+
+        <!-- =================================
+             SAVE BUTTON
+        ================================== -->
+
+        <button
+          type="submit"
+          class="save-btn"
+        >
+          💾 Save Study Log
+        </button>
+
+
+      </form>
+
+    </div>
+
+
+    <!-- =====================================
+         STUDY LOGS
+    ====================================== -->
+
+    <div class="card">
+
+      <h2>
+        📅 My Study Logs
+      </h2>
+
+      <div id="entries">
+
+        <div class="loading">
+          Loading...
+        </div>
+
       </div>
 
     </div>
@@ -416,200 +458,968 @@
 
 <script>
 
-  // ==============================
-  // SUPABASE CONFIGURATION
-  // ==============================
+/* ==========================================
+   SUPABASE CONFIGURATION
+========================================== */
 
-  const SUPABASE_URL =
-    "https://pxlctkjnhwjypymozsnv.supabase.co";
+const SUPABASE_URL =
+  "https://pxlctkjnhwjypymozsnv.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_Nan_vhSVHp-yk_iDjMBYPA_eko07WEu";
+const SUPABASE_KEY =
+  "sb_publishable_Nan_vhSVHp-yk_iDjMBYPA_eko07WEu";
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* ==========================================
+   VARIABLES
+========================================== */
+
+let currentUser = null;
+
+let editingId = null;
+
+
+/* ==========================================
+   LOGIN
+========================================== */
+
+async function login() {
+
+  const email =
+    document
+      .getElementById("email")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("password")
+      .value;
+
+  const message =
+    document.getElementById(
+      "loginMessage"
     );
 
 
-  let editingId = null;
+  if (!email || !password) {
+
+    message.textContent =
+      "Please enter email and password.";
+
+    message.classList.remove(
+      "hidden"
+    );
+
+    return;
+  }
 
 
-  // ==============================
-  // LOGIN
-  // ==============================
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth
+      .signInWithPassword({
 
-  async function login() {
-
-    const email =
-      document.getElementById("email").value.trim();
-
-    const password =
-      document.getElementById("password").value;
-
-    const status =
-      document.getElementById("loginStatus");
-
-    status.textContent = "Logging in...";
-
-    const { error } =
-      await supabaseClient.auth.signInWithPassword({
         email: email,
+
         password: password
+
       });
 
-    if (error) {
 
-      status.textContent =
-        "❌ " + error.message;
+  if (error) {
 
-      return;
-    }
+    message.textContent =
+      "Login failed: " +
+      error.message;
 
-    status.textContent = "";
+    message.classList.remove(
+      "hidden"
+    );
 
-    showDiary();
+    return;
   }
 
 
-  // ==============================
-  // SHOW DIARY
-  // ==============================
+  currentUser =
+    data.user;
 
-  function showDiary() {
 
-    document.getElementById("loginSection")
-      .style.display = "none";
+  showDiary();
 
-    document.getElementById("diarySection")
-      .style.display = "block";
+}
 
-    loadMessages();
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
+async function logout() {
+
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+
+  document
+    .getElementById("diaryPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginPage")
+    .classList.remove("hidden");
+
+}
+
+
+/* ==========================================
+   SHOW DIARY
+========================================== */
+
+function showDiary() {
+
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("diaryPage")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("studyDate")
+    .value =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+
+  loadEntries();
+
+}
+
+
+/* ==========================================
+   SAVE STUDY LOG
+========================================== */
+
+async function saveEntry(event) {
+
+  event.preventDefault();
+
+
+  if (!currentUser) {
+
+    alert("Please login first.");
+
+    return;
+
   }
 
 
-  // ==============================
-  // LOGOUT
-  // ==============================
+  const date =
+    document
+      .getElementById("studyDate")
+      .value;
 
-  async function logout() {
 
-    await supabaseClient.auth.signOut();
+  const hours =
+    document
+      .getElementById("studyHours")
+      .value;
 
-    document.getElementById("diarySection")
-      .style.display = "none";
 
-    document.getElementById("loginSection")
-      .style.display = "block";
+  const subjects =
+    document
+      .getElementById("subjects")
+      .value
+      .trim();
 
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
+
+  const content =
+    document
+      .getElementById("content")
+      .value
+      .trim();
+
+
+  const imageFile =
+    document
+      .getElementById("image")
+      .files[0];
+
+
+  if (!date || !hours || !content) {
+
+    alert(
+      "Please fill Date, Study Hours and Progress."
+    );
+
+    return;
+
   }
 
 
-  // ==============================
-  // SAVE MESSAGE
-  // ==============================
+  try {
 
-  async function saveMessage() {
+    let imagePath = null;
 
-    const title =
-      document.getElementById("title").value.trim();
 
-    const content =
-      document.getElementById("content").value.trim();
+    /* ======================================
+       IMAGE UPLOAD
+    ====================================== */
 
-    const status =
-      document.getElementById("status");
+    if (imageFile) {
 
-    if (!title || !content) {
 
-      status.textContent =
-        "⚠️ Please enter both title and message.";
+      if (
+        imageFile.size >
+        10 * 1024 * 1024
+      ) {
 
-      return;
+        alert(
+          "Image must be smaller than 10 MB."
+        );
+
+        return;
+
+      }
+
+
+      const extension =
+        imageFile.name
+          .split(".")
+          .pop();
+
+
+      const fileName =
+        currentUser.id +
+        "/" +
+        crypto.randomUUID() +
+        "." +
+        extension;
+
+
+      const {
+        error: uploadError
+      } =
+        await supabaseClient.storage
+          .from("study-images")
+          .upload(
+            fileName,
+            imageFile,
+            {
+              upsert: false
+            }
+          );
+
+
+      if (uploadError) {
+
+        alert(
+          "Image upload failed: " +
+          uploadError.message
+        );
+
+        return;
+
+      }
+
+
+      imagePath =
+        fileName;
+
     }
 
-    const {
-      data: { user }
-    } = await supabaseClient.auth.getUser();
 
-    if (!user) {
-
-      status.textContent =
-        "❌ Please login again.";
-
-      return;
-    }
-
-
-    // EDIT EXISTING MESSAGE
+    /* ======================================
+       UPDATE EXISTING ENTRY
+    ====================================== */
 
     if (editingId) {
 
-      const { error } =
+
+      const updateData = {
+
+        study_date: date,
+
+        study_hours:
+          Number(hours),
+
+        subjects:
+          subjects,
+
+        content:
+          content
+
+      };
+
+
+      if (imagePath) {
+
+        updateData.image_path =
+          imagePath;
+
+      }
+
+
+      const {
+        error
+      } =
         await supabaseClient
           .from("messages")
-          .update({
-            title: title,
-            content: content,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", editingId)
-          .eq("user_id", user.id);
+          .update(updateData)
+          .eq(
+            "id",
+            editingId
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          );
+
 
       if (error) {
 
-        status.textContent =
-          "❌ " + error.message;
+        alert(
+          "Update failed: " +
+          error.message
+        );
 
         return;
+
       }
 
-      status.textContent =
-        "✅ Memory updated.";
 
-      editingId = null;
+      alert(
+        "✅ Study log updated successfully."
+      );
 
     }
 
 
-    // CREATE NEW MESSAGE
+    /* ======================================
+       CREATE NEW ENTRY
+    ====================================== */
 
     else {
 
-      const { error } =
+
+      const {
+        error
+      } =
         await supabaseClient
           .from("messages")
           .insert({
-            user_id: user.id,
-            title: title,
-            content: content
+
+            user_id:
+              currentUser.id,
+
+            title:
+              "Daily Study Log",
+
+            content:
+              content,
+
+            study_date:
+              date,
+
+            study_hours:
+              Number(hours),
+
+            subjects:
+              subjects,
+
+            image_path:
+              imagePath
+
           });
+
 
       if (error) {
 
-        status.textContent =
-          "❌ " + error.message;
+        alert(
+          "Save failed: " +
+          error.message
+        );
 
         return;
+
       }
 
-      status.textContent =
-        "✅ Memory saved.";
+
+      alert(
+        "✅ Study log saved successfully."
+      );
+
     }
 
 
-    clearForm(false);
+    clearForm();
 
-    loadMessages();
+    loadEntries();
+
+  }
+
+  catch (error) {
+
+    alert(
+      "Something went wrong: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   LOAD STUDY LOGS
+========================================== */
+
+async function loadEntries() {
+
+  const container =
+    document.getElementById(
+      "entries"
+    );
+
+
+  container.innerHTML =
+    '<div class="loading">Loading...</div>';
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "study_date",
+        {
+          ascending: false
+        }
+      );
+
+
+  if (error) {
+
+    container.innerHTML =
+      "Error loading entries: " +
+      escapeHTML(
+        error.message
+      );
+
+    return;
+
   }
 
 
-  // ==============================
-  // LOAD MESSAGES
-  // ==============================
+  /* ======================================
+     CALCULATE STATISTICS
+  ====================================== */
+
+  let totalHours = 0;
+
+
+  data.forEach(
+    entry => {
+
+      totalHours +=
+        Number(
+          entry.study_hours || 0
+        );
+
+    }
+  );
+
+
+  document
+    .getElementById(
+      "totalDays"
+    )
+    .textContent =
+    data.length;
+
+
+  document
+    .getElementById(
+      "totalHours"
+    )
+    .textContent =
+    totalHours.toFixed(2);
+
+
+  if (data.length === 0) {
+
+    container.innerHTML =
+      "<p>No study logs yet.</p>";
+
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  /* ======================================
+     DISPLAY EACH ENTRY
+  ====================================== */
+
+  for (
+    const entry of data
+  ) {
+
+
+    let imageHTML = "";
+
+
+    /* IMAGE */
+
+    if (entry.image_path) {
+
+
+      const {
+        data: imageData
+      } =
+        await supabaseClient.storage
+          .from("study-images")
+          .createSignedUrl(
+            entry.image_path,
+            3600
+          );
+
+
+      if (
+        imageData &&
+        imageData.signedUrl
+      ) {
+
+        imageHTML = `
+
+          <img
+            class="study-image"
+            src="${imageData.signedUrl}"
+            alt="Study log image"
+          >
+
+        `;
+
+      }
+
+    }
+
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.className =
+      "entry";
+
+
+    div.innerHTML = `
+
+      <h3>
+        📅 ${escapeHTML(
+          entry.study_date
+        )}
+      </h3>
+
+
+      <p>
+        ⏱️ <strong>
+        ${Number(
+          entry.study_hours || 0
+        ).toFixed(2)}
+        hours
+        </strong>
+      </p>
+
+
+      <p>
+        📚 <strong>
+        Subjects:
+        </strong>
+
+        ${escapeHTML(
+          entry.subjects ||
+          "Not specified"
+        )}
+      </p>
+
+
+      <p>
+        📝 <strong>
+        Progress:
+        </strong>
+        <br>
+
+        ${escapeHTML(
+          entry.content
+        ).replace(
+          /\n/g,
+          "<br>"
+        )}
+
+      </p>
+
+
+      ${imageHTML}
+
+
+      <button
+        class="action-btn edit-btn"
+        onclick="editEntry('${entry.id}')"
+      >
+        ✏️ Edit
+      </button>
+
+
+      <button
+        class="action-btn delete-btn"
+        onclick="deleteEntry('${entry.id}')"
+      >
+        🗑️ Delete
+      </button>
+
+    `;
+
+
+    container.appendChild(
+      div
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   EDIT ENTRY
+========================================== */
+
+async function editEntry(id) {
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .single();
+
+
+  if (error) {
+
+    alert(
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  editingId =
+    id;
+
+
+  document
+    .getElementById(
+      "studyDate"
+    )
+    .value =
+    data.study_date;
+
+
+  document
+    .getElementById(
+      "studyHours"
+    )
+    .value =
+    data.study_hours;
+
+
+  document
+    .getElementById(
+      "subjects"
+    )
+    .value =
+    data.subjects || "";
+
+
+  document
+    .getElementById(
+      "content"
+    )
+    .value =
+    data.content;
+
+
+  document
+    .getElementById(
+      "formTitle"
+    )
+    .textContent =
+    "✏️ Edit Study Log";
+
+
+  document
+    .querySelector(
+      ".save-btn"
+    )
+    .textContent =
+    "💾 Update Study Log";
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+}
+
+
+/* ==========================================
+   DELETE ENTRY
+========================================== */
+
+async function deleteEntry(id) {
+
+
+  if (
+    !confirm(
+      "Delete this study log?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  /* FIND IMAGE */
+
+  const {
+    data: entry
+  } =
+    await supabaseClient
+      .from("messages")
+      .select(
+        "image_path"
+      )
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .single();
+
+
+  /* DELETE IMAGE */
+
+  if (
+    entry &&
+    entry.image_path
+  ) {
+
+    await supabaseClient
+      .storage
+      .from("study-images")
+      .remove([
+        entry.image_path
+      ]);
+
+  }
+
+
+  /* DELETE DATABASE ENTRY */
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .delete()
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if (error) {
+
+    alert(
+      "Delete failed: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  alert(
+    "Study log deleted."
+  );
+
+
+  loadEntries();
+
+}
+
+
+/* ==========================================
+   CLEAR FORM
+========================================== */
+
+function clearForm() {
+
+  editingId =
+    null;
+
+
+  document
+    .getElementById(
+      "entryForm"
+    )
+    .reset();
+
+
+  document
+    .getElementById(
+      "studyDate"
+    )
+    .value =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+
+  document
+    .getElementById(
+      "formTitle"
+    )
+    .textContent =
+    "📝 Add Today's Study Log";
+
+
+  document
+    .querySelector(
+      ".save-btn"
+    )
+    .textContent =
+    "💾 Save Study Log";
+
+}
+
+
+/* ==========================================
+   SECURITY
+========================================== */
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+
+/* ==========================================
+   CHECK LOGIN SESSION
+========================================== */
+
+async function checkSession() {
+
+  const {
+    data
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if (
+    data &&
+    data.session
+  ) {
+
+    currentUser =
+      data.session.user;
+
+    showDiary();
+
+  }
+
+}
+
+
+/* ==========================================
+   FORM SUBMIT
+========================================== */
+
+document
+  .getElementById(
+    "entryForm"
+  )
+  .addEventListener(
+    "submit",
+    saveEntry
+  );
+
+
+/* ==========================================
+   START APPLICATION
+========================================== */
+
+checkSessio // ==============================
 
   async function loadMessages() {
 
