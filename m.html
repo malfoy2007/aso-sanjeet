@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Personal Diary</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+      padding: 25px 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1456c2;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0 14px;
+      border: 1px solid #d5dbe5;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .primary {
+      background: #1456c2;
+      color: white;
+    }
+
+    .danger {
+      background: #e53935;
+      color: white;
+    }
+
+    .secondary {
+      background: #e9eef7;
+      color: #172033;
+    }
+
+    .message {
+      border-left: 4px solid #1456c2;
+      padding: 15px;
+      margin: 15px 0;
+      background: #f8faff;
+      border-radius: 8px;
+    }
+
+    .message h3 {
+      margin-top: 0;
+    }
+
+    .date {
+      color: #687386;
+      font-size: 13px;
+    }
+
+    #diarySection {
+      display: none;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .logout {
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div class="card" id="loginSection">
+    <h1>🔐 My Personal Space</h1>
+    <p>This area is private.</p>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="email"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+    <button class="primary" onclick="login()">
+      Login
+    </button>
+
+    <p id="loginStatus"></p>
+  </div>
+
+
+  <!-- DIARY -->
+  <div id="diarySection">
+
+    <div class="card">
+      <button class="danger logout" onclick="logout()">
+        Logout
+      </button>
+
+      <h1>📖 My Personal Diary</h1>
+      <p>Write your thoughts, memories and important moments.</p>
+    </div>
+
+
+    <!-- WRITE -->
+    <div class="card">
+
+      <h2>✍️ Write a New Memory</h2>
+
+      <input
+        type="text"
+        id="title"
+        placeholder="Title"
+      >
+
+      <textarea
+        id="content"
+        placeholder="Write your message or memory here..."
+      ></textarea>
+
+      <button class="primary" onclick="saveMessage()">
+        💾 Save Memory
+      </button>
+
+      <button
+        class="secondary"
+        onclick="clearForm()"
+      >
+        Clear
+      </button>
+
+      <p id="status"></p>
+
+    </div>
+
+
+    <!-- MEMORIES -->
+    <div class="card">
+
+      <h2>📚 My Memories</h2>
+
+      <div id="messages">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ==============================
+  // SUPABASE CONFIGURATION
+  // ==============================
+
+  const SUPABASE_URL =
+    "https://pxlctkjnhwjypymozsnv.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_Nan_vhSVHp-yk_iDjMBYPA_eko07WEu";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  let editingId = null;
+
+
+  // ==============================
+  // LOGIN
+  // ==============================
+
+  async function login() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const status =
+      document.getElementById("loginStatus");
+
+    status.textContent = "Logging in...";
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+
+      status.textContent =
+        "❌ " + error.message;
+
+      return;
+    }
+
+    status.textContent = "";
+
+    showDiary();
+  }
+
+
+  // ==============================
+  // SHOW DIARY
+  // ==============================
+
+  function showDiary() {
+
+    document.getElementById("loginSection")
+      .style.display = "none";
+
+    document.getElementById("diarySection")
+      .style.display = "block";
+
+    loadMessages();
+  }
+
+
+  // ==============================
+  // LOGOUT
+  // ==============================
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    document.getElementById("diarySection")
+      .style.display = "none";
+
+    document.getElementById("loginSection")
+      .style.display = "block";
+
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+  }
+
+
+  // ==============================
+  // SAVE MESSAGE
+  // ==============================
+
+  async function saveMessage() {
+
+    const title =
+      document.getElementById("title").value.trim();
+
+    const content =
+      document.getElementById("content").value.trim();
+
+    const status =
+      document.getElementById("status");
+
+    if (!title || !content) {
+
+      status.textContent =
+        "⚠️ Please enter both title and message.";
+
+      return;
+    }
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+
+      status.textContent =
+        "❌ Please login again.";
+
+      return;
+    }
+
+
+    // EDIT EXISTING MESSAGE
+
+    if (editingId) {
+
+      const { error } =
+        await supabaseClient
+          .from("messages")
+          .update({
+            title: title,
+            content: content,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", editingId)
+          .eq("user_id", user.id);
+
+      if (error) {
+
+        status.textContent =
+          "❌ " + error.message;
+
+        return;
+      }
+
+      status.textContent =
+        "✅ Memory updated.";
+
+      editingId = null;
+
+    }
+
+
+    // CREATE NEW MESSAGE
+
+    else {
+
+      const { error } =
+        await supabaseClient
+          .from("messages")
+          .insert({
+            user_id: user.id,
+            title: title,
+            content: content
+          });
+
+      if (error) {
+
+        status.textContent =
+          "❌ " + error.message;
+
+        return;
+      }
+
+      status.textContent =
+        "✅ Memory saved.";
+    }
+
+
+    clearForm(false);
+
+    loadMessages();
+  }
+
+
+  // ==============================
+  // LOAD MESSAGES
+  // ==============================
+
+  async function loadMessages() {
+
+    const messagesDiv =
+      document.getElementById("messages");
+
+    messagesDiv.innerHTML =
+      "Loading...";
+
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) return;
+
+
+    const { data, error } =
+      await supabaseClient
+        .from("messages")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", {
+          ascending: false
+        });
+
+
+    if (error) {
+
+      messagesDiv.innerHTML =
+        "❌ " + error.message;
+
+      return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+      messagesDiv.innerHTML =
+        "<p>No memories yet. Write your first one above.</p>";
+
+      return;
+    }
+
+
+    messagesDiv.innerHTML = "";
+
+
+    data.forEach(message => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "message";
+
+
+      const date =
+        new Date(message.created_at)
+          .toLocaleString();
+
+
+      div.innerHTML = `
+        <h3>${escapeHTML(message.title)}</h3>
+
+        <div class="date">
+          ${date}
+        </div>
+
+        <p>
+          ${escapeHTML(message.content)
+            .replace(/\n/g, "<br>")}
+        </p>
+
+        <button
+          class="secondary"
+          onclick="editMessage('${message.id}')">
+          ✏️ Edit
+        </button>
+
+        <button
+          class="danger"
+          onclick="deleteMessage('${message.id}')">
+          🗑️ Delete
+        </button>
+      `;
+
+
+      messagesDiv.appendChild(div);
+
+    });
+
+  }
+
+
+  // ==============================
+  // EDIT
+  // ==============================
+
+  async function editMessage(id) {
+
+    const { data, error } =
+      await supabaseClient
+        .from("messages")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+    if (error) {
+
+      alert(error.message);
+
+      return;
+    }
+
+
+    document.getElementById("title").value =
+      data.title;
+
+    document.getElementById("content").value =
+      data.content;
+
+    editingId = id;
+
+    document.getElementById("status")
+      .textContent =
+      "✏️ Editing this memory...";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  // ==============================
+  // DELETE
+  // ==============================
+
+  async function deleteMessage(id) {
+
+    const confirmDelete =
+      confirm(
+        "Delete this memory permanently?"
+      );
+
+    if (!confirmDelete) return;
+
+
+    const { error } =
+      await supabaseClient
+        .from("messages")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+      alert(error.message);
+
+      return;
+    }
+
+
+    loadMessages();
+
+  }
+
+
+  // ==============================
+  // CLEAR FORM
+  // ==============================
+
+  function clearForm(clearStatus = true) {
+
+    document.getElementById("title").value = "";
+
+    document.getElementById("content").value = "";
+
+    editingId = null;
+
+    if (clearStatus) {
+
+      document.getElementById("status")
+        .textContent = "";
+    }
+
+  }
+
+
+  // ==============================
+  // SECURITY: ESCAPE HTML
+  // ==============================
+
+  function escapeHTML(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+  }
+
+
+  // ==============================
+  // CHECK EXISTING SESSION
+  // ==============================
+
+  async function checkSession() {
+
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (session) {
+
+      showDiary();
+
+    }
+
+  }
+
+
+  checkSession();
+
+</script>
+
+</body>
+  </html>
