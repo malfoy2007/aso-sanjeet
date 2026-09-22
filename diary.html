@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Personal Diary</title>
+  <title>My Study Journal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -15,26 +15,239 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
+      background: #f3f6fb;
       color: #172033;
     }
 
     .container {
-      max-width: 850px;
+      max-width: 900px;
       margin: auto;
-      padding: 25px 16px;
+      padding: 20px 15px;
     }
 
     .card {
       background: white;
+      padding: 22px;
       border-radius: 18px;
-      padding: 25px;
       margin-bottom: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      box-shadow: 0 7px 25px rgba(0,0,0,0.08);
     }
 
     h1 {
+      color: #1456c2;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0 14px;
+      border: 1px solid #d4dae5;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 17px;
+      margin: 4px;
+      font-size: 15px;
+    }
+
+    .primary {
+      background: #1456c2;
+      color: white;
+    }
+
+    .danger {
+      background: #e53935;
+      color: white;
+    }
+
+    .secondary {
+      background: #e8edf5;
+      color: #172033;
+    }
+
+    .logout {
+      float: right;
+    }
+
+    #diarySection {
+      display: none;
+    }
+
+    .entry {
+      border-left: 5px solid #1456c2;
+      background: #f8faff;
+      padding: 17px;
+      border-radius: 10px;
+      margin: 18px 0;
+    }
+
+    .entry h3 {
       margin-top: 0;
+    }
+
+    .date {
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid #dce2eb;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+
+    .study-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      margin-top: 15px;
+      border-radius: 12px;
+      background: #eee;
+    }
+
+    .status {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .small {
+      color: #667085;
+      font-size: 13px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+
+  <div class="card" id="loginSection">
+
+    <h1>🔐 My Personal Space</h1>
+
+    <p>This is my private study journal.</p>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button class="primary" onclick="login()">
+      Login
+    </button>
+
+    <p id="loginStatus" class="status"></p>
+
+  </div>
+
+
+  <!-- DIARY -->
+
+  <div id="diarySection">
+
+    <div class="card">
+
+      <button
+        class="danger logout"
+        onclick="logout()">
+        Logout
+      </button>
+
+      <h1>📚 My Study Journal</h1>
+
+      <p>
+        My daily study, progress, memories and thoughts.
+      </p>
+
+    </div>
+
+
+    <!-- NEW LOG -->
+
+    <div class="card">
+
+      <h2>📝 Daily Study Log</h2>
+
+      <label>Date</label>
+
+      <input
+        type="date"
+        id="studyDate"
+      >
+
+
+      <label>Total Study Hours</label>
+
+      <input
+        type="number"
+        id="studyHours"
+        placeholder="Example: 8.5"
+        min="0"
+        max="24"
+        step="0.01"
+      >
+
+
+      <label>Subjects Studied</label>
+
+      <input
+        type="text"
+        id="subjects"
+        placeholder="Maths, English, GK..."
+      >
+
+
+      <label>Today's Progress / Thoughts</label>
+
+      <textarea
+        id="content"
+        placeholder="What did you study today?"
+      ></textarea>
+
+
+      <label>📸 Study Log Image</label>
+
+      <input
+        type="file"
+        id="image"
+        accept="image/*"
+      >
+
+      <p class="      margin-top: 0;
       color: #1456c2;
     }
 
